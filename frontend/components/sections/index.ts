@@ -1,0 +1,9 @@
+export { Header } from "./header";
+export { Hero } from "./hero";
+export { About } from "./about";
+export { Programs } from "./programs";
+export { Impact } from "./impact";
+export { Vision } from "./vision";
+export { Partner } from "./partner";
+export { Contact } from "./contact";
+export { Footer } from "./footer";

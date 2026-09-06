@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500">
+
+  <!-- Teal head -->
+  <circle cx="208" cy="182" r="50" fill="#2EC5D5"/>
+
+  <!-- Right arm / large swoosh -->
+  <path fill="#111111" d="
+    M 178,232
+    C 198,208 228,185 258,162
+    C 288,139 318,114 336,84
+    C 346,64 342,44 357,43
+    C 372,42 385,60 377,88
+    C 365,122 333,148 300,172
+    C 268,196 238,220 218,248
+    Z
+  "/>
+
+  <!-- Left arm -->
+  <path fill="#111111" d="
+    M 190,220
+    C 163,228 128,242 96,256
+    C 79,264 65,278 73,292
+    C 81,306 100,300 120,288
+    C 148,272 177,256 194,242
+    Z
+  "/>
+
+  <!-- Body S-curve -->
+  <path fill="#111111" d="
+    M 212,248
+    C 226,272 232,306 222,340
+    C 212,374 196,406 204,444
+    C 209,464 220,478 214,488
+    C 208,498 192,496 180,484
+    C 168,472 161,456 158,440
+    C 148,406 160,372 170,340
+    C 180,308 180,272 166,248
+    Z
+  "/>
+
+  <!-- JOHNNIE BOY'S -->
+  <text x="380" y="258"
+    font-family="'Arial Black', 'Franklin Gothic Heavy', Impact, sans-serif"
+    font-weight="900" font-size="58" fill="#111111" letter-spacing="0.5">JOHNNIE BOY&#x2019;S</text>
+  <text x="853" y="230"
+    font-family="Arial, sans-serif" font-size="20" fill="#111111">&#174;</text>
+
+  <!-- FOUNDATION -->
+  <text x="380" y="332"
+    font-family="'Arial Black', 'Franklin Gothic Heavy', Impact, sans-serif"
+    font-weight="900" font-size="72" fill="#2EC5D5" letter-spacing="1">FOUNDATION</text>
+
+  <!-- Tagline -->
+  <text x="392" y="370"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-style="italic" font-size="23" fill="#333333" letter-spacing="3.5">Guiding Boys to Greatness</text>
+</svg>

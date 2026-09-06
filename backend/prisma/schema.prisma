@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum GalleryCategory {
+  EVENT
+  PROGRAM
+  ACTIVITY
+  NEWS
+  MILESTONE
+}
+
+enum InquiryType {
+  PROGRAM
+  VOLUNTEER
+  GENERAL
+}
+
+enum SubmissionStatus {
+  NEW
+  READ
+  RESPONDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+
+model Post {
+  id          String          @id @default(cuid())
+  slug        String          @unique
+  title       String
+  description String
+  category    GalleryCategory
+  coverImage  String
+  youtubeId   String?
+  author      String          @default("Johnnie Boy's Foundation")
+  publishedAt DateTime        @default(now())
+  content     Json            // ContentBlock[] from frontend
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([category])
+  @@index([slug])
+}
+
+model TeamMember {
+  id         String   @id @default(cuid())
+  name       String
+  role       String
+  shortBio   String
+  fullBio    String
+  email      String
+  photoUrl   String?
+  socialLinks Json?   // { instagram?, facebook?, twitter?, linkedin? }
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Trustee {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   // Chairman, Secretary, Trustee
+  photoUrl  String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  badge       String
+  imageUrl    String
+  fullCopy    String
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([order])
+}
+
+// ─── Forms ────────────────────────────────────────────────────────────────────
+
+model ContactSubmission {
+  id          String      @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  inquiryType InquiryType @default(GENERAL)
+  subject     String
+  message     String
+  status      SubmissionStatus @default(NEW)
+  createdAt   DateTime    @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model VolunteerApplication {
+  id              String           @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  areaOfInterest  String?
+  availability    String?
+  message         String?
+  status          SubmissionStatus @default(NEW)
+  createdAt       DateTime         @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model EnrollmentRequest {
+  id              String           @id @default(cuid())
+  boyName         String
+  guardianName    String
+  guardianContact String
+  age             Int?
+  programInterest String?
+  message         String?
+  status          SubmissionStatus @default(NEW)
+  createdAt       DateTime         @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ─── Donations ────────────────────────────────────────────────────────────────
+
+model Donation {
+  id                 String        @id @default(cuid())
+  donorName          String?
+  email              String
+  amount             Float
+  currency           String        @default("NGN")
+  paystackReference  String?       @unique
+  status             PaymentStatus @default(PENDING)
+  metadata           Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([status])
+  @@index([paystackReference])
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  @@index([key])
+}
+
+// ─── Analytics ────────────────────────────────────────────────────────────────
+
+model VisitorSession {
+  id            String   @id @default(cuid())
+  sessionId     String   @unique
+  firstSeenAt   DateTime @default(now())
+  lastSeenAt    DateTime @default(now())
+  pageViewCount Int      @default(1)
+
+  @@index([sessionId])
+  @@index([lastSeenAt])
+}
+
+model PageView {
+  id          String   @id @default(cuid())
+  sessionId   String
+  path        String
+  referrer    String?
+  userAgent   String?
+  deviceType  String?  // mobile, desktop, tablet
+  country     String?
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([path])
+  @@index([createdAt])
+}

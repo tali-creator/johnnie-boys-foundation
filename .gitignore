@@ -1,0 +1,3 @@
+frontend/tsconfig.tsbuildinfo
+frontend/public/*.pdf
+backend/.env
