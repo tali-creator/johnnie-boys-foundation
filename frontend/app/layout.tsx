@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import PublicLayout from '@/components/public-layout'
 import AnalyticsTracker from '@/components/analytics-tracker'
 import './globals.css'
@@ -27,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <AnalyticsTracker />
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         <PublicLayout>{children}</PublicLayout>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
