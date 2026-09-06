@@ -16,8 +16,8 @@ export function AnimateIn({
   className = "",
   delay = 0,
   direction = "up",
-  duration = 700,
-  scrollDelay = 500,
+  duration = 300,
+  scrollDelay = 300,
 }: AnimateInProps) {
   const ref = useRef<HTMLDivElement>(null);
 
