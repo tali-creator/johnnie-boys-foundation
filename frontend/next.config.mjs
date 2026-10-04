@@ -25,7 +25,10 @@ const nextConfig = {
     ],
   },
 
-  output: "standalone",
+  // 'standalone' output is for self-hosted deployments (e.g. Docker/Render).
+  // On Vercel, it conflicts with Turbopack because Turbopack doesn't emit the
+  // .nft.json trace files that standalone mode depends on. Vercel handles its
+  // own bundling, so this option is not needed here.
 };
 
 export default nextConfig;
