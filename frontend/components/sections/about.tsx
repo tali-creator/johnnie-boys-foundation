@@ -26,7 +26,7 @@ export function About() {
           to believe in tomorrow.
         </p>
         <a
-          href="#contact"
+          href="/contact"
           className="mt-8 inline-flex items-center gap-2 font-bold text-primary underline decoration-accent decoration-2 underline-offset-4"
         >
           Partner with us <ArrowRight size={18} />

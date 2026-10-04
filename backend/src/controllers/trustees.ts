@@ -14,6 +14,7 @@ export async function listTrustees(
         name: true,
         role: true,
         photoUrl: true,
+        order: true,
       },
     });
     res.json(trustees);

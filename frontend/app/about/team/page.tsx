@@ -1,13 +1,62 @@
 "use client";
 
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { X, Mail, ExternalLink, Globe } from "lucide-react";
+import { X, Mail, ExternalLink, Globe, Loader2 } from "lucide-react";
 import { AnimateIn } from "@/components/animate-in";
-import { teamMembers } from "@/components/sections/team-data";
+import { teamMembers as fallbackMembers } from "@/components/sections/team-data";
+
+export const dynamic = "force-dynamic";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  shortBio: string;
+  fullBio: string;
+  email: string;
+  photoUrl: string | null;
+  image?: string;
+  socialLinks: { instagram?: string; facebook?: string; twitter?: string; linkedin?: string } | null;
+  social?: { linkedin?: string; twitter?: string };
+}
 
 export default function OurTeamPage() {
-  const [selectedMember, setSelectedMember] = useState<typeof teamMembers[0] | null>(null);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+
+  useEffect(() => {
+    fetch(`${API}/api/team`)
+      .then((r) => {
+        if (!r.ok) throw new Error("API unavailable");
+        return r.json();
+      })
+      .then((data) => {
+        setMembers(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fallback to local data, mapping to unified shape
+        setMembers(
+          fallbackMembers.map((m) => ({
+            id: String(m.id),
+            name: m.name,
+            role: m.role,
+            shortBio: m.shortBio,
+            fullBio: m.fullBio,
+            email: m.email,
+            photoUrl: m.image || null,
+            image: m.image,
+            socialLinks: m.social || null,
+            social: m.social,
+          }))
+        );
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <section id="team" className="min-h-screen bg-background">
@@ -24,7 +73,7 @@ export default function OurTeamPage() {
           <AnimateIn direction="up">
             <p className="eyebrow text-accent">Who we are</p>
             <h1 className="mt-4 font-serif text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
-              Board of Trustees
+              Our Team
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-primary-foreground/80">
               The passionate individuals behind Johnnie Boy&apos;s Foundation,
@@ -36,45 +85,51 @@ export default function OurTeamPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-24">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {teamMembers.map((member, index) => (
-            <AnimateIn key={member.id} delay={index * 100} direction="up">
-              <button
-                onClick={() => setSelectedMember(member)}
-                className="group w-full text-left"
-              >
-                <div className="relative overflow-hidden rounded-2xl bg-card transition hover:shadow-xl">
-                  <div className="relative aspect-square w-full overflow-hidden">
-                    <Image
-                      src={`https://ui-avatars.com/api/?name=${member.name.replace(/ /g, "+")}&size=400&background=1a1a2e&color=00e676&bold=true&format=svg`}
-                      alt={member.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
-                    <div className="absolute bottom-0 left-0 right-0 translate-y-4 p-4 text-center opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <span className="inline-block rounded-full bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground">
-                        View Profile
-                      </span>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-accent" />
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {members.map((member, index) => (
+              <AnimateIn key={member.id} delay={index * 100} direction="up">
+                <button
+                  onClick={() => setSelectedMember(member)}
+                  className="group w-full text-left"
+                >
+                  <div className="relative overflow-hidden rounded-2xl bg-card transition hover:shadow-xl">
+                    <div className="relative aspect-square w-full overflow-hidden">
+                      <Image
+                        src={member.photoUrl || member.image || `https://ui-avatars.com/api/?name=${member.name.replace(/ /g, "+")}&size=400&background=1a1a2e&color=00e676&bold=true&format=svg`}
+                        alt={member.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
+                      <div className="absolute bottom-0 left-0 right-0 translate-y-4 p-4 text-center opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                        <span className="inline-block rounded-full bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground">
+                          View Profile
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-serif text-lg font-bold text-foreground">
+                        {member.name}
+                      </h3>
+                      <p className="mt-1 text-sm font-semibold text-accent">
+                        {member.role}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-2">
+                        {member.shortBio}
+                      </p>
                     </div>
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-serif text-lg font-bold text-foreground">
-                      {member.name}
-                    </h3>
-                    <p className="mt-1 text-sm font-semibold text-accent">
-                      {member.role}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-2">
-                      {member.shortBio}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            </AnimateIn>
-          ))}
-        </div>
+                </button>
+              </AnimateIn>
+            ))}
+          </div>
+        )}
       </div>
 
       {selectedMember && (
@@ -94,7 +149,7 @@ export default function OurTeamPage() {
             </button>
             <div className="relative h-64 w-full overflow-hidden">
               <Image
-                src={`https://ui-avatars.com/api/?name=${selectedMember.name.replace(/ /g, "+")}&size=800&background=1a1a2e&color=00e676&bold=true&format=svg`}
+                src={selectedMember.photoUrl || selectedMember.image || `https://ui-avatars.com/api/?name=${selectedMember.name.replace(/ /g, "+")}&size=800&background=1a1a2e&color=00e676&bold=true&format=svg`}
                 alt={selectedMember.name}
                 fill
                 sizes="100%"
@@ -119,18 +174,22 @@ export default function OurTeamPage() {
                 >
                   <Mail size={18} />
                 </a>
-                <a
-                  href={selectedMember.social.linkedin}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition hover:bg-accent hover:text-accent-foreground"
-                >
-                  <ExternalLink size={18} />
-                </a>
-                <a
-                  href={selectedMember.social.twitter}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition hover:bg-accent hover:text-accent-foreground"
-                >
-                  <Globe size={18} />
-                </a>
+                {selectedMember.socialLinks?.linkedin && (
+                  <a
+                    href={selectedMember.socialLinks.linkedin}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <ExternalLink size={18} />
+                  </a>
+                )}
+                {selectedMember.socialLinks?.twitter && (
+                  <a
+                    href={selectedMember.socialLinks.twitter}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Globe size={18} />
+                  </a>
+                )}
               </div>
             </div>
           </div>

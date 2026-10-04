@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState } from "react";
 import Image from "next/image";
 import {
@@ -13,9 +14,13 @@ import {
   MessageCircle,
   Users,
   Heart,
+  Loader2,
 } from "lucide-react";
 import { AnimateIn } from "@/components/animate-in";
 import { SocialLinks } from "@/components/social-links";
+
+export const dynamic = "force-dynamic";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const contactCards = [
   {
@@ -42,14 +47,48 @@ const contactCards = [
 ];
 
 const inquiryTypes = [
-  { icon: Heart, label: "Support a Program", value: "program" },
-  { icon: Users, label: "Volunteer", value: "volunteer" },
-  { icon: MessageCircle, label: "General Inquiry", value: "general" },
+  { icon: Heart, label: "Support a Program", value: "PROGRAM" },
+  { icon: Users, label: "Volunteer", value: "VOLUNTEER" },
+  { icon: MessageCircle, label: "General Inquiry", value: "GENERAL" },
 ];
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
-  const [selectedInquiry, setSelectedInquiry] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedInquiry, setSelectedInquiry] = useState("GENERAL");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch(`${API}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          inquiryType: selectedInquiry,
+        }),
+      });
+      if (res.ok) {
+        setSent(true);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    }
+    setSending(false);
+  }
 
   return (
     <section id="contact" className="bg-background">
@@ -196,10 +235,7 @@ export default function ContactPage() {
               ) : (
                 <form
                   className="flex flex-col gap-5 rounded-3xl bg-white/5 p-6 backdrop-blur-sm sm:p-8"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setSent(true);
-                  }}
+                  onSubmit={handleSubmit}
                 >
                   <div className="grid gap-5 sm:grid-cols-2">
                     <label className="flex flex-col gap-2 text-sm font-bold">
@@ -207,6 +243,8 @@ export default function ContactPage() {
                       <input
                         required
                         placeholder="John Doe"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
                         className="rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 font-normal text-white placeholder-white/40 outline-none transition focus:ring-2 focus:ring-accent"
                       />
                     </label>
@@ -216,6 +254,8 @@ export default function ContactPage() {
                         required
                         type="email"
                         placeholder="you@example.com"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
                         className="rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 font-normal text-white placeholder-white/40 outline-none transition focus:ring-2 focus:ring-accent"
                       />
                     </label>
@@ -226,6 +266,8 @@ export default function ContactPage() {
                     <input
                       type="tel"
                       placeholder="+234 000 000 0000"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       className="rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 font-normal text-white placeholder-white/40 outline-none transition focus:ring-2 focus:ring-accent"
                     />
                   </label>
@@ -256,6 +298,8 @@ export default function ContactPage() {
                     <input
                       required
                       placeholder="How can we help?"
+                      value={form.subject}
+                      onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       className="rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 font-normal text-white placeholder-white/40 outline-none transition focus:ring-2 focus:ring-accent"
                     />
                   </label>
@@ -266,15 +310,26 @@ export default function ContactPage() {
                       required
                       rows={5}
                       placeholder="Tell us more about your inquiry..."
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
                       className="resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 font-normal text-white placeholder-white/40 outline-none transition focus:ring-2 focus:ring-accent"
                     />
                   </label>
 
+                  {error && (
+                    <p className="text-sm font-medium text-red-400">{error}</p>
+                  )}
+
                   <button
                     type="submit"
-                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 font-bold text-accent-foreground transition hover:bg-accent/90 hover:translate-y-[-2px]"
+                    disabled={sending}
+                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-accent px-8 py-4 font-bold text-accent-foreground transition hover:bg-accent/90 hover:translate-y-[-2px] disabled:opacity-50"
                   >
-                    Send Message <Send size={18} />
+                    {sending ? (
+                      <Loader2 size={18} className="animate-spin" />
+                    ) : (
+                      <>Send Message <Send size={18} /></>
+                    )}
                   </button>
                 </form>
               )}

@@ -1,8 +1,5 @@
-import { ProgramDetail } from "@/components/program-detail";
-import { programs } from "@/components/sections/data";
+import { ProgramPage } from "@/components/program-page";
 
 export default function EducationSupportPage() {
-  const program = programs.find((p) => p.slug === "education-support");
-  if (!program) return null;
-  return <ProgramDetail program={program} />;
+  return <ProgramPage slug="education-support" />;
 }

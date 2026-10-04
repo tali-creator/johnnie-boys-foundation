@@ -55,6 +55,27 @@ export async function getPostBySlug(
   }
 }
 
+export async function getPostById(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const id = getParam(req, "id");
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (!post) {
+      res.status(404).json({ error: "Post not found" });
+      return;
+    }
+
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch post" });
+  }
+}
+
 export async function createPost(req: Request, res: Response): Promise<void> {
   try {
     const { title, ...data } = req.body;

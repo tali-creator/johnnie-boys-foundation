@@ -2,6 +2,7 @@ import { CheckCircle2, Heart } from "lucide-react";
 import Image from "next/image";
 import { images } from "./data";
 import { AnimateIn } from "@/components/animate-in";
+import { ImageCarousel } from "@/components/image-carousel";
 
 export function Impact() {
   return (
@@ -61,10 +62,26 @@ export function Impact() {
             </AnimateIn>
             
           </div>
-          <svg className="mt-10" width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="150" cy="150" r="150" fill="#ffffff" />
-          
-        </svg>
+          <ImageCarousel
+            className="mt-10 h-115 w-165 rounded-3xl"
+            images={[
+              "/slides/IMG_0012.jpg",
+              "/slides/IMG_0013.jpg",
+              "/slides/IMG_0031.jpg",
+              "/slides/IMG_0042.jpg",
+              "/slides/IMG_0049.jpg",
+              "/slides/IMG_0050.jpg",
+              "/slides/IMG_0056.jpg",
+              "/slides/IMG_0057.jpg",
+              "/slides/IMG_0061.jpg",
+              "/slides/IMG_0066.jpg",
+              "/slides/IMG_0067.jpg",
+              "/slides/IMG_9989.jpg",
+              "/slides/IMG_9991.jpg",
+              "/slides/IMG_9997.jpg",
+            ]}
+            interval={3000}
+          />
         </AnimateIn>
         <AnimateIn delay={200} direction="up">
           <div className="grid sm:grid-cols-2 gap-4 p-5 md:p-20">

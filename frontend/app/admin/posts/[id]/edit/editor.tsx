@@ -225,7 +225,7 @@ export default function EditPostPage({ postId }: { postId: string }) {
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
   useEffect(() => {
-    fetcher(`/api/posts/${postId}`)
+    fetcher(`/api/posts/by-id/${postId}`)
       .then((r) => r.json())
       .then((data) => {
         setTitle(data.title || "");

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -24,14 +25,14 @@ const aimsAndObjectives = [
 const images = [
   "/hero.jpeg",
   "/mentor.png",
-  "/vision.png",
+  "/vision.jpeg",
   "/enroll-a-boy.jpeg",
   "/volunteer.png",
   "/partner.jpeg",
   "/donate.jpeg",
-  "img1.jpeg",
-  "img2.jpeg",
-  "img3.jpeg",
+  "/img1.jpeg",
+  "/img2.jpeg",
+  "/img3.jpeg",
 ];
 
 const pillars = [
@@ -365,54 +366,7 @@ export default function AboutPage() {
       </div>
 
       {/* Board of Trustees */}
-      <div id="team" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
-        <AnimateIn direction="up">
-          <div className="text-center">
-            <p className="eyebrow">Leadership</p>
-            <h2 className="mt-4 font-serif text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-              Board of Trustees
-            </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              The dedicated individuals guiding our mission and vision.
-            </p>
-          </div>
-        </AnimateIn>
-        <AnimateIn delay={200} direction="up">
-          <div className="mt-16 flex justify-center gap-12">
-            {[
-              {
-                name: "Barnabas Johnnie",
-                role: "Chairman",
-                img: "barnabas.jpeg",
-              },
-              { name: "Abijah Johnnie", role: "Trustee", img: "abijah.png" },
-              {
-                name: "Chioma Oguegbu",
-                role: "Secretary / Trustee",
-                img: "chioma.jpeg",
-              },
-            ].map((trustee) => (
-              <div key={trustee.name} className="text-center">
-                <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full">
-                  <Image
-                    src={trustee.img}
-                    alt={trustee.name}
-                    fill
-                    sizes="160px"
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="mt-6 font-serif text-xl font-bold">
-                  {trustee.name}
-                </h3>
-                <p className="mt-1 text-sm font-semibold text-accent">
-                  {trustee.role}
-                </p>
-              </div>
-            ))}
-          </div>
-        </AnimateIn>
-      </div>
+      <TrusteesSection />
 
       {/* Join / Get Involved */}
       <div id="get-involved" className="bg-primary py-20 text-primary-foreground lg:py-28">
@@ -465,10 +419,122 @@ export default function AboutPage() {
               No 3 Mozambique Crescent, Barnawa Shopping Complex, Kaduna, Kaduna
               State, Nigeria
             </p>
-              <SocialLinks />
+              <SocialLinks variant="light" />
           </div>
         </AnimateIn>
       </div>
     </section>
+  );
+}
+
+// ─── Board of Trustees (dynamic, falls back to seed data) ────────────────────
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+const fallbackTrustees = [
+  { id: "1", name: "Barnabas Johnnie Bamanja", role: "Chairman",            photoUrl: "/barnabas.jpeg", order: 1 },
+  { id: "2", name: "Abijah Johnnie Bamanja",   role: "Trustee",             photoUrl: "/abijah.png",    order: 2 },
+  { id: "3", name: "Chioma Ayomide Johnnie",   role: "Secretary / Trustee", photoUrl: "/chioma.jpeg",   order: 3 },
+];
+
+interface Trustee {
+  id: string;
+  name: string;
+  role: string;
+  photoUrl: string | null;
+  order: number;
+}
+
+function TrusteeCard({ trustee, index }: { trustee: Trustee; index: number }) {
+  const [imgSrc, setImgSrc] = useState(
+    trustee.photoUrl ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(trustee.name)}&size=400&background=1a1a2e&color=00e676&bold=true&format=svg`
+  );
+
+  const handleError = () => {
+    setImgSrc(
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(trustee.name)}&size=400&background=1a1a2e&color=00e676&bold=true&format=svg`
+    );
+  };
+
+  return (
+    <AnimateIn delay={index * 100} direction="up">
+      <div className="group text-center">
+        <div className="relative mx-auto h-44 w-44 overflow-hidden rounded-full border-4 border-border transition duration-300 group-hover:border-accent">
+          <Image
+            src={imgSrc}
+            alt={trustee.name}
+            fill
+            sizes="176px"
+            className="object-cover transition duration-500 group-hover:scale-105"
+            onError={handleError}
+          />
+        </div>
+        <h3 className="mt-5 font-serif text-xl font-bold">
+          {trustee.name}
+        </h3>
+        <p className="mt-1 text-sm font-semibold text-accent">
+          {trustee.role}
+        </p>
+      </div>
+    </AnimateIn>
+  );
+}
+
+function TrusteesSection() {
+  const [trustees, setTrustees] = useState<Trustee[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}/api/trustees`)
+      .then((r) => {
+        if (!r.ok) throw new Error("API unavailable");
+        return r.json();
+      })
+      .then((data: Trustee[]) => {
+        setTrustees(Array.isArray(data) && data.length > 0 ? data : fallbackTrustees);
+      })
+      .catch(() => setTrustees(fallbackTrustees))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const sorted = [...trustees].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  // Determine responsive grid columns based on count
+  const count = sorted.length;
+  const gridClass =
+    count <= 2 ? "sm:grid-cols-2" :
+    count === 3 ? "sm:grid-cols-3" :
+    count === 4 ? "sm:grid-cols-2 lg:grid-cols-4" :
+    "sm:grid-cols-2 lg:grid-cols-3";
+
+  return (
+    <div id="team" className="mx-auto max-w-7xl px-5 py-20 lg:px-8 lg:py-28">
+      <AnimateIn direction="up">
+        <div className="text-center">
+          <p className="eyebrow">Leadership</p>
+          <h2 className="mt-4 font-serif text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+            Board of Trustees
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+            The dedicated individuals guiding our mission and vision.
+          </p>
+        </div>
+      </AnimateIn>
+
+      <AnimateIn delay={200} direction="up">
+        {loading ? (
+          <div className="mt-16 flex justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent border-t-transparent" />
+          </div>
+        ) : (
+          <div className={`mt-16 grid gap-10 ${gridClass} place-items-center`}>
+            {sorted.map((trustee, index) => (
+              <TrusteeCard key={trustee.id} trustee={trustee} index={index} />
+            ))}
+          </div>
+        )}
+      </AnimateIn>
+    </div>
   );
 }

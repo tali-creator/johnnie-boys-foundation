@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { useAdminFetch } from "@/lib/admin-auth";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
@@ -8,8 +9,8 @@ interface Trustee {
   id: string;
   name: string;
   role: string;
-  photo: string;
-  sortOrder: number;
+  photoUrl: string | null;
+  order: number;
 }
 
 export default function AdminTrusteesPage() {
@@ -22,8 +23,14 @@ export default function AdminTrusteesPage() {
   useEffect(() => {
     fetcher("/api/trustees")
       .then((r) => r.json())
-      .then(setTrustees)
-      .finally(() => setLoading(false));
+      .then((data) => {
+        setTrustees(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setTrustees([]);
+        setLoading(false);
+      });
   }, []);
 
   const handleSave = async (data: Partial<Trustee>) => {
@@ -52,7 +59,7 @@ export default function AdminTrusteesPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="font-serif text-3xl font-bold">Trustees</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Manage Board of Trustees (name & role only)</p>
+          <p className="mt-1 text-sm text-muted-foreground">Manage Board of Trustees</p>
         </div>
         <button onClick={() => { setEditing(null); setShowForm(true); }} className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-bold text-accent-foreground transition hover:bg-accent/90">
           <Plus size={16} /> Add Trustee
@@ -78,7 +85,7 @@ export default function AdminTrusteesPage() {
           <div key={t.id} className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 overflow-hidden rounded-full bg-muted">
-                {t.photo && <img src={t.photo} alt={t.name} className="h-full w-full object-cover" />}
+                {t.photoUrl && <img src={t.photoUrl} alt={t.name} className="h-full w-full object-cover" />}
               </div>
               <div className="flex-1">
                 <p className="font-bold">{t.name}</p>
@@ -99,15 +106,15 @@ export default function AdminTrusteesPage() {
 function TrusteeForm({ trustee, onSave }: { trustee: Trustee | null; onSave: (d: Partial<Trustee>) => void }) {
   const [name, setName] = useState(trustee?.name || "");
   const [role, setRole] = useState(trustee?.role || "");
-  const [photo, setPhoto] = useState(trustee?.photo || "");
+  const [photoUrl, setPhotoUrl] = useState(trustee?.photoUrl || "");
   const ic = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent";
 
   return (
     <div className="flex flex-col gap-3">
       <input value={name} onChange={(e) => setName(e.target.value)} className={ic} placeholder="Full name" />
       <input value={role} onChange={(e) => setRole(e.target.value)} className={ic} placeholder="Role (e.g. Board Chair)" />
-      <input value={photo} onChange={(e) => setPhoto(e.target.value)} className={ic} placeholder="Photo URL" />
-      <button onClick={() => onSave({ id: trustee?.id, name, role, photo })} className="self-end rounded-lg bg-accent px-6 py-2 text-sm font-bold text-accent-foreground hover:bg-accent/90">Save</button>
+      <input value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} className={ic} placeholder="Photo URL" />
+      <button onClick={() => onSave({ id: trustee?.id, name, role, photoUrl: photoUrl || null })} className="self-end rounded-lg bg-accent px-6 py-2 text-sm font-bold text-accent-foreground hover:bg-accent/90">Save</button>
     </div>
   );
 }

@@ -1,0 +1,68 @@
+services:
+  - type: web
+    name: jbf-backend
+    runtime: node
+    region: oregon           # Other options: frankfurt, singapore, ohio
+    plan: free               # Upgrade to starter for always-on (no cold starts)
+    rootDir: .
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Render injects PORT automatically — leave sync: false so you set it once
+      # in the dashboard, or omit the PORT var entirely (Render always binds to 10000)
+
+      # ── Database (Neon) ───────────────────────────────────────
+      - key: DATABASE_URL
+        sync: false           # Neon pooled connection string
+      - key: DIRECT_URL
+        sync: false           # Neon direct connection string (for migrations)
+
+      # ── Auth ──────────────────────────────────────────────────
+      - key: JWT_SECRET
+        generateValue: true   # Render auto-generates a secure random value
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+      # ── Cloudflare R2 ─────────────────────────────────────────
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_PUBLIC_URL
+        sync: false
+
+      # ── Paystack ──────────────────────────────────────────────
+      - key: PAYSTACK_SECRET_KEY
+        sync: false
+      - key: PAYSTACK_WEBHOOK_SECRET
+        sync: false
+
+      # ── Email / SMTP ──────────────────────────────────────────
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        value: "Johnnie Boy's Foundation <noreply@johnnieboysfoundation.org>"
+
+      # ── CORS ──────────────────────────────────────────────────
+      - key: FRONTEND_URL
+        sync: false           # Your Vercel / custom frontend domain
+
+      # ── Admin seed (optional, used by npm run db:seed only) ───
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false

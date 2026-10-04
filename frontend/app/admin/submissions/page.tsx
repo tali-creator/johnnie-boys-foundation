@@ -1,8 +1,9 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { useAdminFetch } from "@/lib/admin-auth";
-import { Eye, Trash2, Mail, User, Calendar } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 
 interface Submission {
   id: string;
@@ -20,21 +21,28 @@ export default function AdminSubmissionsPage() {
   const [viewing, setViewing] = useState<Submission | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const q = filter !== "all" ? `?type=${filter}` : "";
     fetcher(`/api/admin/submissions${q}`)
       .then((r) => r.json())
-      .then(setSubmissions)
-      .finally(() => setLoading(false));
+      .then((data) => {
+        setSubmissions(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setSubmissions([]);
+        setLoading(false);
+      });
   }, [filter]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, type: string) => {
     if (!confirm("Delete this submission?")) return;
-    const res = await fetcher(`/api/admin/submissions/${id}`, { method: "DELETE" });
+    const res = await fetcher(`/api/admin/submissions/${type}/${id}`, { method: "DELETE" });
     if (res.ok) setSubmissions((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleMarkRead = async (id: string) => {
-    await fetcher(`/api/admin/submissions/${id}/read`, { method: "PATCH" });
+  const handleMarkRead = async (id: string, type: string) => {
+    await fetcher(`/api/admin/submissions/${type}/${id}/read`, { method: "PATCH" });
     setSubmissions((prev) => prev.map((s) => (s.id === id ? { ...s, status: "READ" } : s)));
   };
 
@@ -92,7 +100,7 @@ export default function AdminSubmissionsPage() {
                 </td>
                 <td className="px-4 py-3">
                   <div>
-                    <p className="font-medium">{s.data.name || s.data.fullName || "—"}</p>
+                    <p className="font-medium">{s.data.name || s.data.fullName || s.data.donorName || "—"}</p>
                     <p className="text-xs text-muted-foreground">{s.data.email || "—"}</p>
                   </div>
                 </td>
@@ -100,14 +108,14 @@ export default function AdminSubmissionsPage() {
                   {new Date(s.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${s.status === "NEW" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${s.status === "NEW" || s.status === "PENDING" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
                     {s.status}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => { setViewing(s); if (s.status === "NEW") handleMarkRead(s.id); }} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted"><Eye size={16} /></button>
-                    <button onClick={() => handleDelete(s.id)} className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 size={16} /></button>
+                    <button onClick={() => { setViewing(s); if (s.status === "NEW" || s.status === "PENDING") handleMarkRead(s.id, s.type); }} className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted"><Eye size={16} /></button>
+                    <button onClick={() => handleDelete(s.id, s.type)} className="rounded-lg p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 size={16} /></button>
                   </div>
                 </td>
               </tr>

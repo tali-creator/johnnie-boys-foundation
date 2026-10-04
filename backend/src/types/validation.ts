@@ -83,3 +83,19 @@ export const programSchema = z.object({
   fullCopy: z.string().min(20),
   order: z.number().int().default(0),
 });
+
+export const initiativeSchema = z.object({
+  slug: z.string().min(2).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+  name: z.string().min(2),
+  tagline: z.string().min(2),
+  summary: z.string().min(10),
+  status: z.enum(["ACTIVE", "FUNDRAISING", "UPCOMING", "COMPLETED"]).default("UPCOMING"),
+  heroImage: z.string().url().optional().nullable(),
+  stats: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+  content: z.array(z.record(z.unknown())).default([]),
+  partners: z.array(z.object({ name: z.string(), logoUrl: z.string().optional().nullable() })).default([]),
+  progressCurrent: z.number().int().nullable().optional(),
+  progressGoal: z.number().int().nullable().optional(),
+  progressLabel: z.string().nullable().optional(),
+  order: z.number().int().default(0),
+});

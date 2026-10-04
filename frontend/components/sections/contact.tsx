@@ -1,10 +1,45 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export function Contact() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch(`${API}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          inquiryType: "GENERAL",
+        }),
+      });
+      if (res.ok) {
+        setSent(true);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Something went wrong.");
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    }
+    setSending(false);
+  }
 
   return (
     <section
@@ -36,10 +71,7 @@ export function Contact() {
       </div>
       <form
         className="flex flex-col gap-5 rounded-3xl bg-secondary p-6 sm:p-8"
-        onSubmit={(event) => {
-          event.preventDefault();
-          setSent(true);
-        }}
+        onSubmit={handleSubmit}
       >
         {sent ? (
           <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
@@ -58,6 +90,8 @@ export function Contact() {
                 Name
                 <input
                   required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="rounded-xl border border-border bg-background px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-accent"
                 />
               </label>
@@ -66,29 +100,44 @@ export function Contact() {
                 <input
                   required
                   type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="rounded-xl border border-border bg-background px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-accent"
                 />
               </label>
             </div>
             <label className="flex flex-col gap-2 text-sm font-bold">
-              I&apos;m interested in...
-              <select className="rounded-xl border border-border bg-background px-4 py-3 font-normal">
-                <option>Volunteering</option>
-                <option>Partnering</option>
-                <option>Supporting a program</option>
-                <option>Learning more</option>
-              </select>
+              Subject
+              <input
+                required
+                value={form.subject}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                className="rounded-xl border border-border bg-background px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-accent"
+              />
             </label>
             <label className="flex flex-col gap-2 text-sm font-bold">
               Message
               <textarea
                 required
                 rows={5}
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
                 className="resize-none rounded-xl border border-border bg-background px-4 py-3 font-normal outline-none focus:ring-2 focus:ring-accent"
               />
             </label>
-            <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition hover:bg-accent hover:text-accent-foreground">
-              Send message <ArrowRight size={18} />
+            {error && (
+              <p className="text-sm font-medium text-destructive">{error}</p>
+            )}
+            <button
+              type="submit"
+              disabled={sending}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 font-bold text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+            >
+              {sending ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>Send message <ArrowRight size={18} /></>
+              )}
             </button>
           </>
         )}

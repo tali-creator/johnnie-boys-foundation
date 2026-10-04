@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { uploadToCloudinary, deleteFromCloudinary } from "../services/upload";
+import { uploadToR2, deleteFromR2 } from "../services/upload";
 
 export async function uploadFile(req: Request, res: Response): Promise<void> {
   try {
@@ -9,7 +9,7 @@ export async function uploadFile(req: Request, res: Response): Promise<void> {
     }
 
     const folder = (req.body.folder as string) || "jbf";
-    const result = await uploadToCloudinary(req.file, folder);
+    const result = await uploadToR2(req.file, folder);
 
     res.status(201).json({
       url: result.url,
@@ -26,16 +26,18 @@ export async function uploadFile(req: Request, res: Response): Promise<void> {
 
 export async function deleteFile(req: Request, res: Response): Promise<void> {
   try {
-    const { publicId, resourceType } = req.body;
+    const { publicId } = req.body;
 
     if (!publicId) {
       res.status(400).json({ error: "publicId is required" });
       return;
     }
 
-    await deleteFromCloudinary(publicId, resourceType || "image");
+    // publicId is the R2 object key, e.g. "jbf/uuid.jpg"
+    await deleteFromR2(publicId);
     res.json({ message: "File deleted" });
   } catch (error) {
+    console.error("Delete error:", error);
     res.status(500).json({ error: "Failed to delete file" });
   }
 }

@@ -24,7 +24,7 @@ export function Vision() {
   return (
     <section
       className="py-24 relative text-primary-foreground lg:py-32 bg-no-repeat bg-cover bg-center"
-      style={{ backgroundImage: "url('/vision.png')" }}
+      style={{ backgroundImage: "url('/vision.jpeg')" }}
     >
       <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/10 to-black/50 z-10"></div>
       <div className="mx-auto max-w-9xl px-5 relative z-20 lg:px-8">

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAdminFetch } from "@/lib/admin-auth";
@@ -23,7 +24,7 @@ export default function AdminPostsPage() {
   const load = () => {
     fetcher("/api/posts")
       .then((r) => r.json())
-      .then(setPosts)
+      .then((data) => setPosts(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
   };
 

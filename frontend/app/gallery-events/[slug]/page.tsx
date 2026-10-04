@@ -1,163 +1,122 @@
+"use client";
+
+import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowRight, Calendar, User, ChevronRight } from "lucide-react";
-import {
-  galleryItems,
-  getGalleryItemBySlug,
-  type ContentBlock,
-  type GalleryCategory,
-} from "@/components/sections/gallery-data";
+import { ArrowRight, Calendar, User, ChevronRight, Loader2 } from "lucide-react";
+import { BlockRenderer } from "@/components/block-renderer";
+import { getGalleryItemBySlug, galleryItems as fallbackItems } from "@/components/sections/gallery-data";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+type GalleryCategory = "EVENT" | "PROGRAM" | "ACTIVITY" | "NEWS" | "MILESTONE";
+
+interface Post {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  category: GalleryCategory;
+  coverImage: string;
+  image?: string;
+  youtubeId: string | null;
+  author: string;
+  publishedAt: string;
+  date?: string;
+  content: unknown[];
+}
 
 const categoryColors: Record<GalleryCategory, string> = {
-  Event: "bg-accent/15 text-accent",
-  Program: "bg-primary/10 text-primary",
-  Activity: "bg-green-500/15 text-green-700",
-  News: "bg-blue-500/15 text-blue-700",
-  Milestone: "bg-amber-500/15 text-amber-700",
+  EVENT: "bg-accent/15 text-accent",
+  PROGRAM: "bg-primary/10 text-primary",
+  ACTIVITY: "bg-green-500/15 text-green-700",
+  NEWS: "bg-blue-500/15 text-blue-700",
+  MILESTONE: "bg-amber-500/15 text-amber-700",
 };
 
-export function generateStaticParams() {
-  return galleryItems.map((item) => ({ slug: item.slug }));
-}
-
-function ContentBlockRenderer({ block }: { block: ContentBlock }) {
-  switch (block.type) {
-    case "heading":
-      if (block.level === 2) {
-        return (
-          <h2 className="mt-10 font-serif text-2xl font-bold leading-snug sm:text-3xl">
-            {block.text}
-          </h2>
-        );
-      }
-      return (
-        <h3 className="mt-8 font-serif text-xl font-bold leading-snug sm:text-2xl">
-          {block.text}
-        </h3>
-      );
-
-    case "paragraph":
-      return (
-        <p
-          className={`mt-4 text-base leading-8 text-muted-foreground ${block.bold ? "font-bold text-foreground" : ""}`}
-        >
-          {block.text}
-        </p>
-      );
-
-    case "image":
-      const widthClass =
-        block.width === "full"
-          ? "w-full"
-          : block.width === "two-thirds"
-            ? "w-2/3"
-            : block.width === "half"
-              ? "w-1/2"
-              : "w-full";
-      return (
-        <figure className={`mt-8 ${widthClass}`}>
-          <div className="relative overflow-hidden rounded-2xl">
-            <Image
-              src={block.src}
-              alt={block.alt}
-              width={1200}
-              height={675}
-              className="w-full object-cover"
-              sizes="(max-width: 768px) 100vw, 800px"
-            />
-          </div>
-          {block.caption && (
-            <figcaption className="mt-3 text-center text-sm italic text-muted-foreground">
-              {block.caption}
-            </figcaption>
-          )}
-        </figure>
-      );
-
-    case "blockquote":
-      return (
-        <blockquote className="mt-8 border-l-4 border-accent bg-accent/5 px-6 py-5">
-          <p className="font-serif text-lg font-bold italic leading-relaxed text-foreground">
-            &ldquo;{block.text}&rdquo;
-          </p>
-          {block.attribution && (
-            <cite className="mt-3 block text-sm font-semibold not-italic text-accent">
-              — {block.attribution}
-            </cite>
-          )}
-        </blockquote>
-      );
-
-    case "cta":
-      return (
-        <div className="mt-8">
-          <Link
-            href={block.href}
-            className={`inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-bold transition ${
-              block.style === "outline"
-                ? "border border-border text-foreground hover:bg-accent hover:text-accent-foreground"
-                : "bg-accent text-accent-foreground hover:bg-accent/90"
-            }`}
-          >
-            {block.text} <ArrowRight size={16} />
-          </Link>
-        </div>
-      );
-
-    case "youtube":
-      return (
-        <div className="mt-8">
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-            <iframe
-              src={`https://www.youtube.com/embed/${block.youtubeId}`}
-              title="YouTube video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
-        </div>
-      );
-
-    case "spacer":
-      const height =
-        block.height === "lg"
-          ? "h-16"
-          : block.height === "md"
-            ? "h-10"
-            : "h-6";
-      return <div className={height} />;
-
-    default:
-      return null;
-  }
-}
-
-export default async function SinglePostPage({
+export default function SinglePostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const post = getGalleryItemBySlug(slug);
+  const { slug } = use(params);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!post) {
-    notFound();
+  useEffect(() => {
+    fetch(`${API}/api/posts/${slug}`)
+      .then((r) => {
+        if (!r.ok) throw new Error("Not found");
+        return r.json();
+      })
+      .then((data) => {
+        setPost(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        // Fallback to local data
+        const local = getGalleryItemBySlug(slug);
+        if (local) {
+          setPost({
+            id: String(local.id),
+            slug: local.slug,
+            title: local.title,
+            description: local.description,
+            category: local.category.toUpperCase() as GalleryCategory,
+            coverImage: local.image,
+            image: local.image,
+            youtubeId: (local as any).youtubeId || null,
+            author: local.author || "Johnnie Boy's Foundation",
+            publishedAt: local.date
+              ? new Date(local.date).toISOString()
+              : new Date().toISOString(),
+            date: local.date,
+            content: local.content as unknown[],
+          });
+        } else {
+          setNotFound(true);
+        }
+        setLoading(false);
+      });
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-accent" />
+      </div>
+    );
   }
 
-  const currentIndex = galleryItems.findIndex((item) => item.slug === slug);
-  const nextPost = galleryItems[currentIndex + 1] || galleryItems[0];
-  const prevPost =
-    galleryItems[currentIndex - 1] ||
-    galleryItems[galleryItems.length - 1];
+  if (notFound || !post) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <h1 className="font-serif text-3xl font-bold text-foreground">
+          Post not found
+        </h1>
+        <Link
+          href="/gallery-events"
+          className="text-sm font-semibold text-accent hover:underline"
+        >
+          Back to Gallery
+        </Link>
+      </div>
+    );
+  }
+
+  const dateStr = post.date || new Date(post.publishedAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <section id="post" className="bg-background">
       {/* Hero Image */}
       <div className="relative aspect-[21/9] w-full overflow-hidden lg:aspect-[3/1]">
         <Image
-          src={post.image}
+          src={post.coverImage || post.image || "/hero.jpeg"}
           alt={post.title}
           fill
           sizes="100vw"
@@ -188,11 +147,11 @@ export default async function SinglePostPage({
           <span
             className={`rounded-full px-3 py-1 text-xs font-bold ${categoryColors[post.category]}`}
           >
-            {post.category.toUpperCase()}
+            {post.category}
           </span>
           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <Calendar size={14} />
-            {post.date}
+            {dateStr}
           </div>
           {post.author && (
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -212,9 +171,7 @@ export default async function SinglePostPage({
 
         {/* Dynamic Content Blocks */}
         <article>
-          {post.content.map((block, index) => (
-            <ContentBlockRenderer key={index} block={block} />
-          ))}
+          <BlockRenderer blocks={post.content as any} />
         </article>
 
         {/* Divider */}
@@ -260,34 +217,6 @@ export default async function SinglePostPage({
           >
             <ArrowRight size={16} className="rotate-180" />
             Back to Gallery
-          </Link>
-        </div>
-      </div>
-
-      {/* Previous / Next Post */}
-      <div className="border-t border-border bg-muted/50">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px lg:px-8">
-          <Link
-            href={`/gallery-events/${prevPost.slug}`}
-            className="group flex flex-col gap-2 p-8 transition hover:bg-background"
-          >
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              ← Previous
-            </span>
-            <span className="font-serif text-lg font-bold leading-snug group-hover:text-accent">
-              {prevPost.title}
-            </span>
-          </Link>
-          <Link
-            href={`/gallery-events/${nextPost.slug}`}
-            className="group flex flex-col items-end gap-2 p-8 text-right transition hover:bg-background"
-          >
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Next →
-            </span>
-            <span className="font-serif text-lg font-bold leading-snug group-hover:text-accent">
-              {nextPost.title}
-            </span>
           </Link>
         </div>
       </div>

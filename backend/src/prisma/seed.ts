@@ -86,68 +86,64 @@ async function main() {
   // ─── Team Members ─────────────────────────────────────────────────────────
   const teamMembers = [
     {
-      name: "Abubakar Ibrahim",
+      name: "Barnabas Johnnie Bamanja",
       role: "Founder & Executive Director",
-      shortBio: "Visionary leader with a passion for youth empowerment.",
-      fullBio: "Abubakar Ibrahim is the founder and executive director of Johnnie Boy's Foundation. With over a decade of experience in community development and youth advocacy, he has dedicated his life to creating opportunities for boys and young men in northern Nigeria. His vision and leadership have guided the foundation from a small community initiative to a recognized non-profit organization making real impact across multiple states.",
-      email: "abubakar@johnnieboysfoundation.org",
+      shortBio: "Social innovator, researcher, creative practitioner, youth advocate, and community builder.",
+      fullBio: "Barnabas Johnnie is a Nigerian social innovator, researcher, creative practitioner, youth advocate, and community builder working at the intersection of culture, creativity, research, youth development, climate action, and social impact. He is the Managing Director and Chief Researcher at Duniatè Culture, a research and creative project management organization in Kaduna State. He is also the Founder of Johnnie Boys Foundation, an emerging platform dedicated to mentoring and empowering underserved young boys in Northern Nigeria through education, exposure, skills development, advocacy, and emotional support. He serves as Impact Officer for the Kaduna Global Shapers Hub and as Team Lead for the Kaduna Climate Action Lab (KCAL). Academically, Barnabas has a background in Biochemistry and is currently pursuing a Master's degree in Nutrition.",
+      email: "",
+      photoUrl: "/barnabas.jpeg",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 1,
     },
     {
-      name: "Fatima Abdullahi",
-      role: "Program Director",
-      shortBio: "Experienced program manager specializing in education and mentorship.",
-      fullBio: "Fatima Abdullahi serves as the Program Director, overseeing all of the foundation's core programs. With a background in education and non-profit management, she ensures that every program delivers measurable impact. Her strategic approach to program design and implementation has been instrumental in the foundation's growth and success.",
-      email: "fatima@johnnieboysfoundation.org",
+      name: "Abijah Johnnie Bamanja",
+      role: "Deputy Director / Vice President",
+      shortBio: "Passionate Software Engineer with 7+ years of experience designing full-stack and backend systems.",
+      fullBio: "Abijah is a passionate and hands-on Software Engineer with 7+ years of experience designing and shipping full-stack and backend systems across fintech, edtech, and blockchain. He specializes in building scalable APIs, crafting smart contracts, and contributing to the decentralized future, working fluently with JavaScript, PHP, Rust, Cairo, and Solidity. From launching CBN-integrated financial products in Nigeria to designing Octaflip, a multiplayer Web3 game on Starknet, he has led projects that combine strong engineering with real-world impact. He is deeply involved in open source, with 50+ Web3 contributions, and has strong experience with DevOps pipelines using Docker and GitHub Actions. He is driven by the opportunity to build the future—secure, decentralized, and inclusive.",
+      email: "",
+      photoUrl: "/abijah.png",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 2,
     },
     {
-      name: "Ibrahim Musa",
-      role: "Head of Education",
-      shortBio: "Educator and curriculum developer with a love for teaching.",
-      fullBio: "Ibrahim Musa leads the foundation's education support initiatives. As a qualified educator with years of teaching experience, he designs curricula and learning materials tailored to the needs of boys in underserved communities. His innovative approach to education has helped hundreds of boys improve their academic performance and stay in school.",
-      email: "ibrahim@johnnieboysfoundation.org",
+      name: "Chioma Ayomide Johnnie",
+      role: "Finance & Administration Manager",
+      shortBio: "Mass Communication graduate with experience in HR, Public Relations, and administrative support.",
+      fullBio: "Chioma Ayomide is a Mass Communication graduate with experience in Human Resources, Protocol, Public Relations, virtual assistance, and administrative support. She is a strong communicator with excellent interpersonal skills and a keen ability to handle sensitive and confidential responsibilities with professionalism. A dependable team player, she brings organization, discretion, and a collaborative spirit to her role, helping to ensure effective coordination and smooth day-to-day operations within the organization.",
+      email: "",
+      photoUrl: "/chioma.jpeg",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 3,
     },
     {
-      name: "Aisha Bello",
-      role: "Mentorship Coordinator",
-      shortBio: "Passionate about connecting young men with positive role models.",
-      fullBio: "Aisha Bello coordinates the foundation's mentorship program, matching mentees with suitable mentors and ensuring productive relationships. Her background in psychology and community work gives her unique insight into the needs of young people and the qualities that make effective mentors.",
-      email: "aisha@johnnieboysfoundation.org",
+      name: "Godsfear Fyhenum Joseph",
+      role: "Communications & Media Officer",
+      shortBio: "Creative media professional and storyteller passionate about visual communication and impact.",
+      fullBio: "Godsfear is a creative media professional and storyteller passionate about using visual communication to inspire, connect, and create impact. As the Media Director at the organization, he leads the development of compelling visual content, digital storytelling, and media strategies that bring the organization's vision and work to life. With a strong eye for creativity and a passion for meaningful storytelling, he continues to use media as a powerful tool for amplifying voices, engaging communities, and driving positive change.",
+      email: "",
+      photoUrl: "/godsfear.jpeg",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 4,
     },
     {
-      name: "Yusuf Danjuma",
-      role: "Skills Training Lead",
-      shortBio: "Tech professional dedicated to bridging the digital divide.",
-      fullBio: "Yusuf Danjuma leads the foundation's skills training and digital literacy programs. With a background in software development and digital marketing, he brings real-world expertise to the classroom. His bootcamps and workshops have introduced dozens of boys to coding, design, and other marketable skills.",
-      email: "yusuf@johnnieboysfoundation.org",
+      name: "Benjamin Johnnie Bamanja",
+      role: "Operations & Logistics Manager",
+      shortBio: "Dependable force behind smooth and successful operations with a problem-solving mindset.",
+      fullBio: "Benjamin is the dependable force behind smooth and successful operations. As the Logistics Manager, he brings organization, precision and a problem-solving mindset to every project, ensuring that people, resources and plans come together seamlessly. Calm under pressure and committed to excellence, Benjamin helps turn every vision into a well-executed experience.",
+      email: "",
+      photoUrl: "/benjamin.jpeg",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 5,
     },
     {
-      name: "Hauwa Suleiman",
-      role: "Wellness Counselor",
-      shortBio: "Certified counselor supporting the emotional health of young people.",
-      fullBio: "Hauwa Suleiman provides counseling and wellness support to the boys in the foundation's programs. As a certified counselor, she offers individual and group sessions that help young people process their emotions, build resilience, and develop healthy coping strategies. Her work is vital to the holistic development of every boy the foundation serves.",
-      email: "hauwa@johnnieboysfoundation.org",
+      name: "Tali Nanzing",
+      role: "ICT Director",
+      shortBio: "Leading the foundation's information and communication technology initiatives.",
+      fullBio: "Tali serves as the ICT Director, overseeing the foundation's technology infrastructure and digital initiatives. Tali ensures that the organization leverages technology effectively to achieve its mission and deliver impactful programs to the communities it serves.",
+      email: "",
+      photoUrl: "/tali.png",
+      socialLinks: { linkedin: "#", twitter: "#" },
       order: 6,
-    },
-    {
-      name: "Khalid Abubakar",
-      role: "Community Outreach Manager",
-      shortBio: "Community organizer with deep roots in northern Nigeria.",
-      fullBio: "Khalid Abubakar manages the foundation's community outreach and enrollment efforts. His deep connections in local communities and his ability to build trust with families have been crucial to reaching boys who need support the most. He leads the door-to-door outreach that identifies and enrolls boys into the foundation's programs.",
-      email: "khalid@johnnieboysfoundation.org",
-      order: 7,
-    },
-    {
-      name: "Maryam Aliyu",
-      role: "Communications Director",
-      shortBio: "Storyteller and advocate spreading the foundation's mission.",
-      fullBio: "Maryam Aliyu directs the foundation's communications and media efforts. With a background in journalism and digital media, she crafts compelling stories that highlight the foundation's impact and inspire support. Her work in social media, content creation, and public relations has significantly increased the foundation's visibility and reach.",
-      email: "maryam@johnnieboysfoundation.org",
-      order: 8,
     },
   ];
 
@@ -171,9 +167,9 @@ async function main() {
 
   // ─── Trustees ─────────────────────────────────────────────────────────────
   const trustees = [
-    { name: "Barnabas Johnnie", role: "Chairman", order: 1, photoUrl: "/barnabas.jpeg" },
-    { name: "Abijah Johnnie", role: "Trustee", order: 2, photoUrl: "/abijah.png" },
-    { name: "Chioma Oguegbu", role: "Secretary / Trustee", order: 3, photoUrl: null },
+    { name: "Barnabas Johnnie Bamanja", role: "Chairman", order: 1, photoUrl: "/barnabas.jpeg" },
+    { name: "Abijah Johnnie Bamanja", role: "Trustee", order: 2, photoUrl: "/abijah.png" },
+    { name: "Chioma Ayomide Johnnie", role: "Secretary / Trustee", order: 3, photoUrl: "/chioma.jpeg" },
   ];
 
   for (const trustee of trustees) {
@@ -339,6 +335,149 @@ async function main() {
     });
   }
   console.log("✅ Gallery posts seeded");
+
+  // ─── Initiatives ────────────────────────────────────────────────────────
+  const initiatives = [
+    {
+      slug: "bloom",
+      name: "BLOOM",
+      tagline: "Upgrading Minds. Shaping Futures.",
+      summary:
+        "BLOOM is a youth development initiative creating pathways for young people to discover their potential, develop practical skills, and gain the confidence to shape their futures.",
+      status: "ACTIVE" as const,
+      heroImage: "/impact/intro-session.jpg",
+      stats: [
+        { label: "Students Reached", value: "2,867" },
+        { label: "Schools Visited", value: "16+" },
+        { label: "Exercise Books Distributed", value: "300+" },
+        { label: "Writing Materials Distributed", value: "2,000+" },
+        { label: "Learning Materials Distributed", value: "2,000+" },
+      ],
+      content: [
+        { type: "heading", level: 2, text: "Introducing BLOOM" },
+        {
+          type: "paragraph",
+          text: "BLOOM is a youth development initiative of Johnnie Boy's Foundation designed to create pathways for young people to discover their potential, develop practical skills and gain the confidence and support needed to shape their futures.",
+        },
+        {
+          type: "paragraph",
+          text: "As a growing platform for youth empowerment, BLOOM brings together complementary projects that address different stages of young people's development. One of its key projects is the 50 Schools Journey to Purpose, an outreach initiative focused on taking purpose discovery, mentorship, leadership, character development, career guidance and learning resources directly to students in schools.",
+        },
+        {
+          type: "paragraph",
+          text: "The project has so far reached 2,867 students across 16+ schools, alongside the distribution of writing materials, mathematical sets and other learning resources.",
+        },
+        { type: "heading", level: 2, text: "The Two Components" },
+        {
+          type: "paragraph",
+          text: "The first component is the 50 Schools Journey to Purpose — an outreach initiative focused on taking purpose discovery, mentorship, leadership, character development, career guidance and learning resources directly to students in schools across Kaduna State.",
+        },
+        {
+          type: "paragraph",
+          text: "The second component is Skill Acquisition and Mentorship, which builds on the foundation created through the school outreach. It provides young people with practical, future-oriented skills including Artificial Intelligence, AI automation, graphic design, photography, content creation, social media management, entrepreneurship, leadership, communication, purpose discovery and career development.",
+        },
+        {
+          type: "paragraph",
+          text: "Together, these projects represent the BLOOM approach: first helping young people discover their purpose, then equipping them with the skills, mentorship and opportunities to turn that purpose into meaningful action.",
+        },
+        { type: "heading", level: 2, text: "Our Story" },
+        {
+          type: "paragraph",
+          text: "The 50 Schools Journey to Purpose Initiative began with a question that would not let us rest: what if the greatest barrier holding students back was not intelligence, but a lack of exposure and direction?",
+        },
+        {
+          type: "paragraph",
+          text: "We saw students who could recite formulas but had never been asked what they wanted their lives to stand for. We saw classrooms where potential leaders, entrepreneurs and innovators sat quietly, waiting for someone to notice them. That gap is what Johnnie Boy's Foundation set out to close.",
+        },
+        {
+          type: "paragraph",
+          text: "What started as a conversation among a small group of passionate young volunteers has grown into a structured outreach reaching thousands of students across public and private schools in Kaduna State.",
+        },
+        {
+          type: "blockquote",
+          text: "Every student we meet is a reminder of why this work matters — potential is everywhere; what is missing is exposure and a mentor who believes in them.",
+          attribution: "Israel Olabode Tope, Team Lead MindUpgrade",
+        },
+        { type: "heading", level: 2, text: "Future Skills & Mentorship Programme" },
+        {
+          type: "paragraph",
+          text: "Building on the momentum of the 50 Schools Journey to Purpose Initiative, Johnnie Boy's Foundation and its partners launched the Future Skills & Mentorship Programme — a structured, completely FREE training programme for selected students who have been reached through our school outreaches.",
+        },
+        {
+          type: "paragraph",
+          text: "Training Areas: Artificial Intelligence (AI), AI Automation, Graphic Design, Photography, Content Creation, Social Media Management, Entrepreneurship, Leadership, Data Analysis, Purpose Discovery, Career Development.",
+        },
+        {
+          type: "paragraph",
+          text: "Participants receive hands-on training from experienced facilitators, one-on-one and group mentorship, real hands-on projects, and a Certificate of Completion.",
+        },
+        { type: "heading", level: 2, text: "Why This Matters" },
+        {
+          type: "paragraph",
+          text: "For many students in the communities we serve, opportunities like the Future Skills & Mentorship Program simply do not exist. Without exposure to AI, digital skills, entrepreneurship or structured mentorship, countless capable young people will finish school without ever discovering what they are truly capable of.",
+        },
+        {
+          type: "paragraph",
+          text: "Investing in one student does not just change that student — it changes a household. A young person equipped with purpose, skills and confidence becomes a source of income, guidance and hope for their family. Multiply that across hundreds of students and you begin to see how mentoring young people today quietly builds the stronger, more resilient communities of tomorrow.",
+        },
+      ],
+      partners: [
+        { name: "MindUpgrade" },
+        { name: "DanSebo Global Services Ltd" },
+        { name: "ShineGirl Africa" },
+        { name: "Blossomine Foundation" },
+        { name: "Artizen" },
+      ],
+      progressCurrent: null,
+      progressGoal: null,
+      progressLabel: null,
+      order: 1,
+    },
+    {
+      slug: "rooted",
+      name: "Rooted",
+      tagline: "Building spaces where young minds grow",
+      summary:
+        "A planned physical space in Taraba State combining a tech hub and creative studio — currently in the fundraising and planning stage. Full details coming soon.",
+      status: "FUNDRAISING" as const,
+      heroImage: null,
+      stats: [],
+      content: [
+        { type: "heading", level: 2, text: "About Rooted" },
+        {
+          type: "paragraph",
+          text: "Rooted is an exciting new initiative from Johnnie Boy's Foundation — a planned physical space in Taraba State that will combine a tech hub and creative studio under one roof.",
+        },
+        {
+          type: "paragraph",
+          text: "The vision is to create a dedicated space where young people can access technology, learn digital skills, explore creative arts, and receive mentorship in a supportive environment. The space will include computer labs, creative studios, meeting rooms, and mentorship areas.",
+        },
+        {
+          type: "paragraph",
+          text: "We are currently in the fundraising and planning stage. Full details, images, and fundraising targets will be added soon.",
+        },
+        {
+          type: "blockquote",
+          text: "Every young person deserves a space where they can dream, learn, and grow. Rooted will be that space for the youth of Taraba State.",
+          attribution: "Johnnie Boy's Foundation",
+        },
+      ],
+      partners: [],
+      progressCurrent: 0,
+      progressGoal: null,
+      progressLabel: "Raised so far",
+      order: 2,
+    },
+  ];
+
+  for (const initiative of initiatives) {
+    await prisma.initiative.upsert({
+      where: { slug: initiative.slug },
+      update: initiative,
+      create: initiative,
+    });
+  }
+  console.log("✅ Initiatives seeded");
 
   // ─── Site Settings ────────────────────────────────────────────────────────
   const settings: Record<string, string> = {

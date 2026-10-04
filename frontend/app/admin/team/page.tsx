@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { useAdminFetch } from "@/lib/admin-auth";
 import { Plus, Pencil, Trash2, GripVertical, X } from "lucide-react";
@@ -24,7 +25,7 @@ export default function AdminTeamPage() {
   useEffect(() => {
     fetcher("/api/team")
       .then((r) => r.json())
-      .then(setMembers)
+      .then((data) => setMembers(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false));
   }, []);
 

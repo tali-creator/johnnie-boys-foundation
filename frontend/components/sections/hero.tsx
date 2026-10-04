@@ -40,13 +40,13 @@ export function Hero() {
           <AnimateIn delay={800} duration={800}>
             <div className="mt-10 flex flex-wrap gap-4">
               <a
-                href="#programs"
+                href="/initiatives"
                 className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-bold text-accent-foreground transition hover:translate-y-[-2px]"
               >
                 Explore our work <ArrowRight size={18} />
               </a>
               <a
-                href="#about"
+                href="/about"
                 className="rounded-full border border-primary-foreground/50 px-6 py-3.5 font-bold transition hover:bg-primary-foreground hover:text-primary"
               >
                 Learn about us

@@ -1,49 +1,71 @@
-import Link from "next/link";
-import Image from "next/image";
+"use client";
+
+import { FaInstagram, FaFacebook, FaWhatsapp, FaLinkedin } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 
 const socialLinks = [
   {
-    image: "/svg-icons/gmail.svg",
-    href: "Johnnieboysfoundation@gmail.com",
+    icon: MdEmail,
+    label: "Email us",
+    href: "mailto:Johnnieboysfoundation@gmail.com",
   },
   {
-    image: "/svg-icons/Instagram.svg",
+    icon: FaInstagram,
+    label: "Instagram",
     href: "https://instagram.com/Johnnieboysfoundation",
   },
   {
-    image: "/svg-icons/facebook.svg",
+    icon: FaFacebook,
+    label: "Facebook",
     href: "https://facebook.com/Johnnieboysfoundation",
   },
   {
-    image: "/svg-icons/x.svg",
+    icon: FaXTwitter,
+    label: "X (Twitter)",
     href: "https://twitter.com/Johnnieboysfoundation",
   },
   {
-    image: "/svg-icons/whatsApp.svg",
+    icon: FaWhatsapp,
+    label: "WhatsApp",
     href: "https://wa.me/2348131576436",
   },
   {
-    image: "/svg-icons/linkedin.svg",
-    href: "https://www.linkedin.com/in/johnnie-boys-foundation-084818297/"  }
+    icon: FaLinkedin,
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/johnnie-boys-foundation-084818297/",
+  },
 ];
 
-export function SocialLinks() {
+interface SocialLinksProps {
+  /**
+   * "light" → icons use primary color (dark, for light backgrounds)
+   * "dark"  → icons are white (for dark/primary-color backgrounds)
+   * Defaults to "dark" since the footer has a dark background.
+   */
+  variant?: "light" | "dark";
+  iconSize?: number;
+}
+
+export function SocialLinks({ variant = "dark", iconSize = 20 }: SocialLinksProps) {
+  const colorClass =
+    variant === "dark"
+      ? "text-white hover:text-accent"
+      : "text-primary hover:text-accent";
+
   return (
-    <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-      {socialLinks.map((link, index) => (
-        <Link
-          key={index}
-          href={link.href}
-          className="inline-flex items-center gap-2 rounded-full p-1 font-bold transition hover:border hover:border-accent"
+    <div className="flex flex-wrap items-center gap-4">
+      {socialLinks.map(({ icon: Icon, label, href }) => (
+        <a
+          key={label}
+          href={href}
+          target={href.startsWith("mailto") ? undefined : "_blank"}
+          rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+          aria-label={label}
+          className={`transition-colors duration-200 ${colorClass}`}
         >
-          <Image
-            src={link.image}
-            alt={`Social Link ${index + 1}`}
-            width={50}
-            height={50}
-            className="h-8 w-auto"
-          />
-        </Link>
+          <Icon size={iconSize} aria-hidden="true" />
+        </a>
       ))}
     </div>
   );

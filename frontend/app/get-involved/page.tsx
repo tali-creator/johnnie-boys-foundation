@@ -11,8 +11,9 @@ const cards = [
       "Our programs provide mentorship, education, and skills training to boys and young men in underserved communities. Enroll a boy today and help him unlock his full potential.",
     buttonText: "ENROLL NOW",
     buttonAlt: "LEARN MORE",
-    href: "#",
-    image: "enroll-a-boy.jpeg",
+    href: "/enroll",
+    hrefAlt: "/about",
+    image: "/enroll-a-boy.jpeg",
     titleColor: "text-[#FFD700]",
     buttonBg: "bg-[#FFD700]",
     buttonTextAlt: "border-[#FFD700] text-[#FFD700]",
@@ -24,8 +25,9 @@ const cards = [
       "Whether you have a ton of time or just a few hours, there's a way for you to share your expertise and make an impact in the lives of our boys. Don't have a technical background? No problem–all support is valued!",
     buttonText: "BECOME A MENTOR",
     buttonAlt: "FIND OUT MORE",
-    href: "#",
-    image: "volunteer.png",
+    href: "/volunteer",
+    hrefAlt: "/about",
+    image: "/volunteer.png",
     titleColor: "text-[#00E676]",
     buttonBg: "bg-[#00E676]",
     buttonTextAlt: "border-[#00E676] text-[#00E676]",
@@ -38,7 +40,8 @@ const cards = [
     buttonText: "CONTACT US TODAY",
     buttonAlt: "FIND OUT MORE",
     href: "/contact",
-    image: "partner.jpeg",
+    hrefAlt: "/about",
+    image: "/partner.jpeg",
     titleColor: "text-[#FFD700]",
     buttonBg: "bg-[#FFD700]",
     buttonTextAlt: "border-[#FFD700] text-[#FFD700]",
@@ -50,8 +53,9 @@ const cards = [
       "When you donate, you help us provide education, mentorship, and skills training to boys who need it most. Every gift matters and creates lasting impact in our communities.",
     buttonText: "DONATE NOW",
     buttonAlt: "EXPLORE WAYS TO GIVE",
-    href: "#",
-    image: "donate.jpeg",
+    href: "/donate",
+    hrefAlt: "/donate",
+    image: "/donate.jpeg",
     titleColor: "text-[#00E676]",
     buttonBg: "bg-[#00E676]",
     buttonTextAlt: "border-[#00E676] text-[#00E676]",
@@ -119,12 +123,12 @@ export default function GetInvolvedPage() {
                     <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                       <Link
                         href={card.href}
-                        className={`rounded-lg px-6 py-3 text-sm font-bold text-black transition hover:opacity-90 ${card.buttonBg}`}
+                        className={`rounded-lg px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 ${card.buttonBg}`}
                       >
                         {card.buttonText}
                       </Link>
                       <Link
-                        href={card.href}
+                        href={card.hrefAlt}
                         className={`rounded-lg border px-6 py-3 text-sm font-bold transition hover:bg-white/10 ${card.buttonTextAlt}`}
                       >
                         {card.buttonAlt}

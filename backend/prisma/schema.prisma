@@ -1,10 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled connection — used at runtime (via Neon's connection pooler)
+  url       = env("DATABASE_URL")
+  // Direct connection — used by prisma migrate deploy (bypasses pooler)
+  directUrl = env("DIRECT_URL")
 }
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -33,6 +37,13 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+}
+
+enum InitiativeStatus {
+  ACTIVE
+  FUNDRAISING
+  UPCOMING
+  COMPLETED
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -111,6 +122,29 @@ model Program {
 
   @@index([slug])
   @@index([order])
+}
+
+model Initiative {
+  id              String           @id @default(cuid())
+  slug            String           @unique
+  name            String
+  tagline         String
+  summary         String
+  status          InitiativeStatus @default(UPCOMING)
+  heroImage       String?
+  stats           Json             @default("[]") // { label: string, value: string }[]
+  content         Json             @default("[]") // ContentBlock[]
+  partners        Json             @default("[]") // { name: string, logoUrl?: string }[]
+  progressCurrent Int?
+  progressGoal    Int?
+  progressLabel   String?
+  order           Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([slug])
+  @@index([order])
+  @@index([status])
 }
 
 // ─── Forms ────────────────────────────────────────────────────────────────────

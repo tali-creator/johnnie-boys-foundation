@@ -19,7 +19,7 @@ export function Partner() {
               </p>
               <a
                 href="/contact"
-                className="mt-8 inline-block rounded-full bg-accent px-8 py-4 text-lg font-bold text-black transition-colors hover:bg-accent/90"
+                className="mt-8 inline-block rounded-full bg-accent px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-accent/90"
               >
                 Partner With Us
               </a>

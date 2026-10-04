@@ -20,7 +20,10 @@ import {
   Globe,
   Calendar,
   Clock,
+  Activity,
 } from "lucide-react";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface Overview {
   totalVisitors: number;
@@ -68,9 +71,9 @@ export default function AdminDashboardPage() {
     ])
       .then(([ov, pg, tl, rf]) => {
         setOverview(ov);
-        setPages(pg);
-        setTimeline(tl);
-        setReferrers(rf);
+        setPages(Array.isArray(pg) ? pg : []);
+        setTimeline(Array.isArray(tl) ? tl : []);
+        setReferrers(Array.isArray(rf) ? rf : []);
       })
       .finally(() => setLoading(false));
   }, [range, fetcher]);
@@ -79,25 +82,25 @@ export default function AdminDashboardPage() {
     ? [
         {
           label: "Total Visitors",
-          value: overview.totalVisitors,
+          value: overview.totalVisitors ?? 0,
           icon: Users,
           color: "text-blue-600",
         },
         {
           label: "Total Page Views",
-          value: overview.totalPageViews,
+          value: overview.totalPageViews ?? 0,
           icon: Eye,
           color: "text-accent",
         },
         {
           label: "Visitors (24h)",
-          value: overview.visitors24h,
+          value: overview.visitors24h ?? 0,
           icon: Clock,
           color: "text-green-600",
         },
         {
           label: "Visitors (7d)",
-          value: overview.visitors7d,
+          value: overview.visitors7d ?? 0,
           icon: Calendar,
           color: "text-amber-600",
         },

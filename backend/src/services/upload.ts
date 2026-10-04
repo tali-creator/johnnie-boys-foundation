@@ -1,15 +1,33 @@
-import { v2 as cloudinary } from "cloudinary";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import multer from "multer";
+import { randomUUID } from "crypto";
+import path from "path";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+// ─── R2 Client ────────────────────────────────────────────────────────────────
+
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
 });
+
+const BUCKET = process.env.R2_BUCKET_NAME!;
+
+/** Base URL of the R2 public bucket (no trailing slash). */
+const PUBLIC_URL = (process.env.R2_PUBLIC_URL || "").replace(/\/$/, "");
+
+// ─── Multer (memory storage — same as before) ─────────────────────────────────
 
 export const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
   fileFilter: (_req, file, cb) => {
     const allowed = [
       "image/jpeg",
@@ -27,38 +45,48 @@ export const upload = multer({
   },
 });
 
-export async function uploadToCloudinary(
+// ─── Upload ───────────────────────────────────────────────────────────────────
+
+/**
+ * Upload a file to Cloudflare R2 and return its public URL and object key.
+ *
+ * The object key is: `<folder>/<uuid><ext>`
+ * e.g. "jbf/a1b2c3d4-…-ef.jpg"
+ */
+export async function uploadToR2(
   file: Express.Multer.File,
   folder: string = "jbf"
 ): Promise<{ url: string; publicId: string }> {
-  return new Promise((resolve, reject) => {
-    const isVideo = file.mimetype.startsWith("video/");
-    const resourceType = isVideo ? "video" : "image";
+  const ext = path.extname(file.originalname).toLowerCase() || "";
+  const key = `${folder}/${randomUUID()}${ext}`;
 
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: resourceType,
-        transformation: isVideo
-          ? undefined
-          : [{ quality: "auto", fetch_format: "auto" }],
-      },
-      (error, result) => {
-        if (error) return reject(error);
-        if (!result) return reject(new Error("Upload failed"));
-        resolve({ url: result.secure_url, publicId: result.public_id });
-      }
-    );
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ContentLength: file.size,
+    })
+  );
 
-    stream.end(file.buffer);
-  });
+  const url = `${PUBLIC_URL}/${key}`;
+  return { url, publicId: key };
 }
 
-export async function deleteFromCloudinary(
-  publicId: string,
-  resourceType: string = "image"
-): Promise<void> {
-  await cloudinary.uploader.destroy(publicId, {
-    resource_type: resourceType,
-  });
+// ─── Delete ───────────────────────────────────────────────────────────────────
+
+/**
+ * Delete a file from Cloudflare R2 by its object key.
+ *
+ * The `publicId` stored in the database is the full object key
+ * (e.g. "jbf/a1b2c3d4-…-ef.jpg"), so we can pass it directly.
+ */
+export async function deleteFromR2(key: string): Promise<void> {
+  await r2.send(
+    new DeleteObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+    })
+  );
 }

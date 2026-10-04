@@ -1,15 +1,55 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { programs } from "./data";
 import { AnimateIn } from "@/components/animate-in";
+import { programs as fallbackPrograms } from "./data";
+
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+interface Program {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  badge: string;
+  imageUrl: string;
+  image?: string;
+  fullCopy: string;
+  order: number;
+}
 
 export function Programs() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [programs, setPrograms] = useState<Program[]>([]);
+
+  useEffect(() => {
+    fetch(`${API}/api/programs`)
+      .then((r) => {
+        if (!r.ok) throw new Error("API unavailable");
+        return r.json();
+      })
+      .then((data) => setPrograms(data))
+      .catch(() => {
+        // Fallback to local data, mapping image -> imageUrl
+        setPrograms(
+          fallbackPrograms.map((p) => ({
+            id: p.slug,
+            slug: p.slug,
+            title: p.title,
+            description: p.description,
+            badge: p.badge,
+            imageUrl: p.image,
+            image: p.image,
+            fullCopy: p.fullCopy,
+            order: 0,
+          }))
+        );
+      });
+  }, []);
 
   const checkScroll = () => {
     if (scrollRef.current) {
@@ -104,7 +144,7 @@ export function Programs() {
                   <Link href={`/${program.slug}`}>
                     <div className="relative h-68 overflow-hidden bg-muted">
                       <img
-                        src={program.image}
+                        src={program.imageUrl}
                         alt={program.title}
                         className="h-full w-full object-cover transition group-hover:scale-105"
                       />

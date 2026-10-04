@@ -1,14 +1,9 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { useAdminFetch } from "@/lib/admin-auth";
 import { Save } from "lucide-react";
-
-interface Settings {
-  id: string;
-  key: string;
-  value: string;
-}
 
 const DEFAULT_SETTINGS = [
   { key: "site_name", label: "Site Name", value: "Johnnie Boy's Foundation" },
@@ -35,12 +30,24 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     fetcher("/api/admin/settings")
       .then((r) => r.json())
-      .then((data: Settings[]) => {
+      .then((data: Record<string, string>) => {
         const map: Record<string, string> = {};
-        data.forEach((s) => (map[s.key] = s.value));
+        // Backend returns { key: value, ... } flat object
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          Object.entries(data).forEach(([key, value]) => {
+            map[key] = String(value);
+          });
+        }
+        // Fill in defaults for any missing keys
         DEFAULT_SETTINGS.forEach((d) => {
           if (!map[d.key]) map[d.key] = d.value;
         });
+        setSettings(map);
+      })
+      .catch(() => {
+        // Use defaults on error
+        const map: Record<string, string> = {};
+        DEFAULT_SETTINGS.forEach((d) => (map[d.key] = d.value));
         setSettings(map);
       })
       .finally(() => setLoading(false));
@@ -49,10 +56,10 @@ export default function AdminSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const entries = Object.entries(settings).map(([key, value]) => ({ key, value }));
+      // Backend expects { key: value, ... } directly
       await fetcher("/api/admin/settings", {
         method: "PUT",
-        body: JSON.stringify({ settings: entries }),
+        body: JSON.stringify(settings),
       });
       alert("Settings saved!");
     } catch {

@@ -7,7 +7,7 @@ import { loginSchema } from "../types/validation";
 const router = Router();
 
 router.post("/login", validate(loginSchema), login);
-router.post("/register", register); // Protected in production
+router.post("/register", authenticateAdmin, register);
 router.get("/profile", authenticateAdmin, getProfile);
 
 export default router;
